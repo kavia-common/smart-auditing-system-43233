@@ -53,6 +53,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 INSTALLED_APPS = [
     'rest_framework',
+    'drf_spectacular',  # OpenAPI schema generation and Swagger/Redoc UIs
     'invoicedata.apps.InvoicedataConfig',
     'users.apps.UsersConfig',
     'audit.apps.AuditConfig',
@@ -149,6 +150,52 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Django REST framework and drf-spectacular settings
+REST_FRAMEWORK = {
+    # Enable spectacular to generate OpenAPI schema
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # Default auth: session-based for browsable UI; token/jwt can be added later
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Smart Auditing System API',
+    'DESCRIPTION': 'Django-based smart auditing system with OCR-driven invoice extraction and auditing API.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,
+        'displayOperationId': True,
+    },
+    # Define auth schemes so requests can be executed via Swagger/Redoc
+    'AUTHENTICATION_WHITELIST': [],
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY': [
+        {'sessionAuth': []},
+        {'basicAuth': []},
+    ],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'sessionAuth': {
+                'type': 'apiKey',
+                'in': 'cookie',
+                'name': 'sessionid',
+                'description': 'Django session cookie authentication (login at /admin/ or standard login view).',
+            },
+            'basicAuth': {
+                'type': 'http',
+                'scheme': 'basic',
+            },
+        }
+    },
+}
 
 # Use BigAutoField for auto-created primary keys across all apps
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
