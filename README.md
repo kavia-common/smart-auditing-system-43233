@@ -7,6 +7,10 @@
   - bash start.sh
   - This script will create a virtual environment, install dependencies, run migrations, and start the server on http://0.0.0.0:3001
 
+The preview system runs the same command sequence via Procfile:
+- Procfile: `web: bash start.sh`
+- start.sh: Creates venv, installs `pip install -r requirements.txt`, then `python manage.py migrate` and `python manage.py runserver 0.0.0.0:3001`
+
 Dependencies are listed in requirements.txt. For environment customization, copy .env.example to .env and update as needed.
 
 ## Project Title
@@ -48,9 +52,4 @@ Consider an image with only two distinct image values (bimodal image), where the
 
 ## Keywords
 Python, OpenCV, Tesseract, OTSU's Binerisation (for UI web based solution so HTML, CSS and javascript)
-
-
-
-
-
 

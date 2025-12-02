@@ -8,29 +8,62 @@ set -euo pipefail
 # - Upgrades pip and installs dependencies from requirements.txt
 # - Applies database migrations
 # - Runs the development server bound to 0.0.0.0:3001
+#
+# This script is designed to be invoked by the preview system via Procfile:
+#   web: bash start.sh
 
 # Detect project root (this script is placed in the repo root for the container)
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 cd "$PROJECT_ROOT"
 
-# Create venv if missing
-if [ ! -d "venv" ]; then
-  python3 -m venv venv
+# Python selector: prefer python3, fallback to python
+PYTHON_BIN="${PYTHON_BIN:-python3}"
+if ! command -v "$PYTHON_BIN" >/dev/null 2>&1; then
+  if command -v python >/dev/null 2>&1; then
+    PYTHON_BIN="python"
+  else
+    echo "Error: No suitable Python binary found (python3 or python)."
+    exit 1
+  fi
 fi
 
-# Activate venv
-source venv/bin/activate
+# Create venv if missing (ensure deterministic venv path under project root)
+if [ ! -d "venv" ]; then
+  "$PYTHON_BIN" -m venv venv
+fi
 
-# Upgrade pip and install deps
-pip install --upgrade pip
+# Activate venv (works for bash and sh)
+# shellcheck disable=SC1091
+source "venv/bin/activate"
+
+# Ensure pip is present and up-to-date in the venv
+python -m pip install --upgrade pip setuptools wheel
+
+# Install dependencies before Django imports happen
 if [ -f "requirements.txt" ]; then
+  echo "Installing Python dependencies from requirements.txt ..."
   pip install -r requirements.txt
 else
   echo "requirements.txt not found; please ensure dependencies are listed."
   exit 1
 fi
 
-# Migrate and run
+# Confirm Django is importable (fail fast with helpful message)
+python - <<'PYCHK'
+try:
+    import django  # noqa: F401
+except Exception as exc:
+    import sys, traceback
+    print("Failed to import Django after installing dependencies.", file=sys.stderr)
+    traceback.print_exc()
+    sys.exit(1)
+else:
+    import django
+    print(f"Django import OK. Version: {django.get_version()}")
+PYCHK
+
+# Apply migrations (database setup)
 python manage.py migrate --noinput
-python manage.py runserver 0.0.0.0:3001
+
+# Start development server on 0.0.0.0:3001 (as required by preview system)
+exec python manage.py runserver 0.0.0.0:3001
