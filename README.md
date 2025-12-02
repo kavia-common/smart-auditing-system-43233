@@ -13,6 +13,15 @@ The preview system runs the same command sequence via Procfile:
 
 Dependencies are listed in requirements.txt. For environment customization, copy .env.example to .env and update as needed.
 
+## API Docs & Trying Endpoints in Swagger
+
+- Open API docs at /api/docs/ (Swagger UI) or /api/schema/redoc/ (ReDoc).
+- Auth supported in Swagger:
+  - Session (cookie) auth: Click Authorize and select sessionAuth (cookies). Log in at /login/ or /admin/login/. Cookies will be sent automatically. For POST/PUT/PATCH/DELETE ensure you have a CSRF cookie; hit GET /api/auth/csrf/ once to set csrftoken in your browser cookies.
+  - Token auth: Obtain a token by POSTing username/password to POST /api/auth/token/ (Try it out in Swagger). Then click Authorize and set the header as "Token <your_token>".
+  - Basic auth is also available for quick testing.
+- All REST endpoints (including audit) are under /api/audit/ and are fully described with request/response schemas for "Try it out".
+
 ## Project Title
 Develop UI for data extraction from invoices pdf using computer vision
 

@@ -24,6 +24,14 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import JsonResponse
+from rest_framework.authtoken.views import obtain_auth_token
+
+# Simple CSRF endpoint to set csrftoken cookie and return it for Swagger clients
+def csrf_token_view(request):
+    token = request.META.get("CSRF_COOKIE")
+    return JsonResponse({"csrftoken": token})
 
 urlpatterns = [
     path('api/ping/', __import__('major_project.api_public', fromlist=['']).ping, name='api-ping'),
@@ -39,6 +47,12 @@ urlpatterns = [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     # Convenience docs index
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='api-docs'),
+
+    # Auth utilities for Swagger execution
+    # - DRF Token auth creation endpoint
+    path('api/auth/token/', obtain_auth_token, name='api-token-auth'),
+    # - CSRF cookie endpoint (GET) for session-auth unsafe methods
+    path('api/auth/csrf/', ensure_csrf_cookie(csrf_token_view), name='api-csrf'),
 
     # API endpoints for audit app
     path('api/audit/', include('audit.urls')),

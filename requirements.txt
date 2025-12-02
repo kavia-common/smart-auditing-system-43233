@@ -4,6 +4,7 @@ django>=4.2,<5
 # Django ecosystem
 djangorestframework>=3.14
 django-crispy-forms>=2.0
+djangorestframework-authtoken>=1.0
 drf-spectacular>=0.27,<1
 
 # OCR and Image processing

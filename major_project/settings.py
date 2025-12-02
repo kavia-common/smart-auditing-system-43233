@@ -54,6 +54,8 @@ CSRF_TRUSTED_ORIGINS = [
 INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular',  # OpenAPI schema generation and Swagger/Redoc UIs
+    # Optional Token authentication for Swagger execution via token header
+    'rest_framework.authtoken',
     'invoicedata.apps.InvoicedataConfig',
     'users.apps.UsersConfig',
     'audit.apps.AuditConfig',
@@ -155,9 +157,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 REST_FRAMEWORK = {
     # Enable spectacular to generate OpenAPI schema
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # Default auth: session-based for browsable UI; token/jwt can be added later
+    # Default auth: session-based; include Token & Basic for flexibility in Swagger
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -169,29 +172,42 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Smart Auditing System API',
     'DESCRIPTION': 'Django-based smart auditing system with OCR-driven invoice extraction and auditing API.',
     'VERSION': '1.0.0',
+    # include schema in /api/schema/ route; doc UIs are configured in urls.py
     'SERVE_INCLUDE_SCHEMA': False,
     'SWAGGER_UI_SETTINGS': {
         'persistAuthorization': True,
         'displayOperationId': True,
+        # withSessionAuth instructs UI to keep cookies (sessionid, csrftoken)
+        'withCredentials': True,
     },
-    # Define auth schemes so requests can be executed via Swagger/Redoc
-    'AUTHENTICATION_WHITELIST': [],
+    # Split components to improve request/response schemas
     'COMPONENT_SPLIT_REQUEST': True,
+    # Security: allow selecting auth methods in Swagger "Authorize"
     'SECURITY': [
         {'sessionAuth': []},
         {'basicAuth': []},
+        {'tokenAuth': []},
     ],
     'COMPONENTS': {
         'securitySchemes': {
+            # Django Session cookie auth (login via /login/ or /admin/login/)
             'sessionAuth': {
                 'type': 'apiKey',
                 'in': 'cookie',
                 'name': 'sessionid',
-                'description': 'Django session cookie authentication (login at /admin/ or standard login view).',
+                'description': 'Django session cookie authentication. Obtain by logging in at /login/ (or /admin/login/). CSRF cookie is required for unsafe methods.',
             },
             'basicAuth': {
                 'type': 'http',
                 'scheme': 'basic',
+                'description': 'HTTP Basic authentication.',
+            },
+            # DRF TokenAuthentication
+            'tokenAuth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'Authorization',
+                'description': 'Token authentication. Use "Token <your_token>" as the value.',
             },
         }
     },
