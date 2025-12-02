@@ -26,6 +26,11 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    # API endpoints for audit app
+    path('api/audit/', include('audit.urls')),
+    # Optional server-rendered pages for audit app
+    path('audit/', include('audit.pages_urls')),
+    # Existing app URLs
     path('', include('invoicedata.urls')),
 ]
 

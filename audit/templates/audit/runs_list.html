@@ -1,0 +1,56 @@
+{% extends "invoicedata/base.html" %}
+{% block content %}
+<main role="main" class="container" style="margin-right: 11%;">
+  <div class="col-md-12">
+    <h2>Audit Runs</h2>
+    <form method="get" class="form-inline mb-3">
+      <select name="status" class="form-control mr-2">
+        <option value="">Status</option>
+        {% for st in "PENDING,RUNNING,COMPLETED,FAILED".split(',') %}
+        <option value="{{ st }}" {% if request.GET.status == st %}selected{% endif %}>{{ st }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Triggered By</th>
+          <th>Totals</th>
+          <th>Started</th>
+          <th>Ended</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in runs %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.triggered_by }}</td>
+          <td>Checks: {{ r.total_checks }} | Findings: {{ r.total_findings }} | Failed: {{ r.total_failed }}</td>
+          <td>{{ r.started_at }}</td>
+          <td>{{ r.ended_at }}</td>
+          <td><a class="btn btn-sm btn-outline-primary" href="{% url 'audit_pages:run-detail' r.id %}">Open</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No runs found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if is_paginated %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+      <span class="mx-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

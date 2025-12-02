@@ -1,0 +1,63 @@
+{% extends "invoicedata/base.html" %}
+{% block content %}
+<main role="main" class="container" style="margin-right: 11%;">
+  <div class="col-md-12">
+    <h2>Audit Findings</h2>
+    <form method="get" class="form-inline mb-3">
+      <input type="text" name="invoice" placeholder="Invoice ID" class="form-control mr-2" value="{{ request.GET.invoice }}">
+      <select name="severity" class="form-control mr-2">
+        <option value="">Severity</option>
+        {% for s in "LOW,MEDIUM,HIGH,CRITICAL".split(',') %}
+        <option value="{{ s }}" {% if request.GET.severity == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+      <select name="status" class="form-control mr-2">
+        <option value="">Status</option>
+        {% for st in "OPEN,SUPPRESSED,RESOLVED".split(',') %}
+        <option value="{{ st }}" {% if request.GET.status == st %}selected{% endif %}>{{ st }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary" type="submit">Filter</button>
+    </form>
+    <table class="table table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Invoice</th>
+          <th>Rule</th>
+          <th>Severity</th>
+          <th>Status</th>
+          <th>Title</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for f in findings %}
+        <tr>
+          <td>{{ f.id }}</td>
+          <td>{{ f.invoice_id }}</td>
+          <td>{{ f.rule.code }}</td>
+          <td>{{ f.severity }}</td>
+          <td>{{ f.status }}</td>
+          <td>{{ f.title }}</td>
+          <td>{{ f.created_at }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No findings found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if is_paginated %}
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+      <span class="mx-2">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Next</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}
