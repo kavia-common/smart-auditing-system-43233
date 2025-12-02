@@ -149,7 +149,8 @@ class AuditFinding(TimeStampedModel):
         (STATUS_RESOLVED, "Resolved"),
     ]
 
-    check = models.ForeignKey(AuditCheck, on_delete=models.CASCADE, related_name="findings")
+    # Rename field from 'check' to 'audit_check' to avoid clashing with Django's Model.check() API
+    audit_check = models.ForeignKey(AuditCheck, on_delete=models.CASCADE, related_name="findings")
     invoice = models.ForeignKey("invoicedata.Invoicelist", on_delete=models.CASCADE, related_name="audit_findings")
     rule = models.ForeignKey(AuditRule, on_delete=models.PROTECT, related_name="findings")
     title = models.CharField(max_length=255, help_text="Short summary of the finding.")

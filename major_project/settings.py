@@ -150,5 +150,8 @@ MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
+# Use BigAutoField for auto-created primary keys across all apps
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 LOGIN_REDIRECT_URL = 'invoicedata-home'
 LOGIN_URL = 'login'

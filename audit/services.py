@@ -93,13 +93,13 @@ def _get_or_create_open_finding_for(rule: AuditRule, invoice: Invoicelist, check
     ).order_by("-created_at").first()
     if existing:
         # Ensure this check is associated too (it may be a newer run)
-        if existing.check_id != check.id:
-            existing.check = check
-            existing.save(update_fields=["check", "updated_at"])
+        if existing.audit_check_id != check.id:
+            existing.audit_check = check
+            existing.save(update_fields=["audit_check", "updated_at"])
         return existing, False
 
     finding = AuditFinding.objects.create(
-        check=check,
+        audit_check=check,
         invoice=invoice,
         rule=rule,
         title=f"{rule.name} failed for invoice {invoice.pk}",
