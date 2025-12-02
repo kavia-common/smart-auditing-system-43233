@@ -1,0 +1,20 @@
+# Core framework
+django>=4.2,<5
+
+# Django ecosystem
+djangorestframework>=3.14
+django-crispy-forms>=2.0
+
+# OCR and Image processing
+opencv-python-headless>=4.5
+pytesseract>=0.3.10
+pillow>=10.0
+
+# Environment variable loader (optional for future use)
+python-dotenv>=1.0
+
+# Optional: invoice parsing dependency used in views (imported as invoice2data)
+invoice2data>=0.3
+
+# Excel export used in views
+xlwt>=1.3

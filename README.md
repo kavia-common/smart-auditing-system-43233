@@ -1,5 +1,14 @@
 # SmartAuditing [ Major Project ]
 
+## Quick start (development/preview)
+
+- Ensure Python 3.10+ is available.
+- From the project root run:
+  - bash start.sh
+  - This script will create a virtual environment, install dependencies, run migrations, and start the server on http://0.0.0.0:3001
+
+Dependencies are listed in requirements.txt. For environment customization, copy .env.example to .env and update as needed.
+
 ## Project Title
 Develop UI for data extraction from invoices pdf using computer vision
 

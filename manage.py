@@ -4,7 +4,9 @@ import os
 import sys
 
 
+# PUBLIC_INTERFACE
 def main():
+    """Entrypoint for Django manage commands."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'major_project.settings')
     try:
         from django.core.management import execute_from_command_line
