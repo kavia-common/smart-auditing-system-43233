@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'invoicedata.apps.InvoicedataConfig',
     'users.apps.UsersConfig',
+    'audit.apps.AuditConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
