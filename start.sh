@@ -48,12 +48,20 @@ else
   exit 1
 fi
 
-# Confirm Django is importable (fail fast with helpful message)
+# Verify pkg_resources (from setuptools) is available before Django imports
 python - <<'PYCHK'
+import sys, traceback
+try:
+    import pkg_resources  # provided by setuptools
+except Exception:
+    print("pkg_resources import failed. setuptools may be missing or broken in the venv.", file=sys.stderr)
+    traceback.print_exc()
+    sys.exit(1)
+
+# Confirm Django is importable (fail fast with helpful message)
 try:
     import django  # noqa: F401
 except Exception as exc:
-    import sys, traceback
     print("Failed to import Django after installing dependencies.", file=sys.stderr)
     traceback.print_exc()
     sys.exit(1)

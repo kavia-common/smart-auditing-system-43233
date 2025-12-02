@@ -13,7 +13,10 @@ pillow>=10.0
 # Environment variable loader (optional for future use)
 python-dotenv>=1.0
 
-# Optional: invoice parsing dependency used in views (imported as invoice2data)
+# Ensure pkg_resources is available (provided by setuptools)
+setuptools>=68.0
+
+# Invoice parsing dependency used in views (imported as invoice2data)
 invoice2data>=0.3
 
 # Excel export used in views
