@@ -33,11 +33,14 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     ".kavia.ai",  # allow preview subdomains like *.kavia.ai
+    "vscode-internal-28335-beta.beta01.cloud.kavia.ai",  # explicit preview host
 ]
 
 # CSRF trusted origins must include scheme and cannot be "*" wildcard.
 # We include the kavia preview domain with a wildcard subdomain and localhost over http and https.
 CSRF_TRUSTED_ORIGINS = [
+    # Exact preview origin (required so POSTs from the preview domain:3001 are accepted)
+    "https://vscode-internal-28335-beta.beta01.cloud.kavia.ai:3001",
     "https://*.kavia.ai",
     "http://localhost",
     "http://127.0.0.1",
