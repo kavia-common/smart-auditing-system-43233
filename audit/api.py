@@ -52,81 +52,6 @@ class AuditRuleListCreateView(generics.ListCreateAPIView):
     permission_classes = [StaffWritePermission]
 
     @extend_schema(
-        tags=["Audit Findings"],
-        summary="Retrieve audit finding",
-        responses={200: AuditFindingSerializer},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Findings"],
-        summary="Update audit finding (staff)",
-        request=AuditFindingSerializer,
-        responses={200: AuditFindingSerializer},
-    )
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Findings"],
-        summary="Partially update audit finding (staff)",
-        request=AuditFindingSerializer,
-        responses={200: AuditFindingSerializer},
-    )
-    def patch(self, request, *args, **kwargs):
-        return super().patch(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Findings"],
-        summary="List audit findings",
-        parameters=[
-            OpenApiParameter(name="invoice", description="Filter by invoice id.", required=False, type=int),
-            OpenApiParameter(name="severity", description="LOW|MEDIUM|HIGH|CRITICAL", required=False, type=str),
-            OpenApiParameter(name="status", description="OPEN|SUPPRESSED|RESOLVED", required=False, type=str),
-            OpenApiParameter(name="rule", description="Filter by rule id.", required=False, type=int),
-        ],
-        responses={200: AuditFindingSerializer(many=True)},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Findings"],
-        summary="Create audit finding (staff)",
-        request=AuditFindingSerializer,
-        responses={201: AuditFindingSerializer},
-    )
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Rules"],
-        summary="Retrieve audit rule",
-        responses={200: AuditRuleSerializer},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Rules"],
-        summary="Update audit rule",
-        request=AuditRuleSerializer,
-        responses={200: AuditRuleSerializer},
-    )
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Rules"],
-        summary="Partially update audit rule",
-        request=AuditRuleSerializer,
-        responses={200: AuditRuleSerializer},
-    )
-    def patch(self, request, *args, **kwargs):
-        return super().patch(request, *args, **kwargs)
-
-    @extend_schema(
         tags=["Audit Rules"],
         summary="List audit rules",
         description="List all audit rules with optional filters by is_active and severity.",
@@ -180,6 +105,18 @@ class AuditRuleRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     queryset = AuditRule.objects.all().order_by("-created_at")
     permission_classes = [StaffWritePermission]
 
+    @extend_schema(tags=["Audit Rules"], summary="Retrieve audit rule", responses={200: AuditRuleSerializer})
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(tags=["Audit Rules"], summary="Update audit rule", request=AuditRuleSerializer, responses={200: AuditRuleSerializer})
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(tags=["Audit Rules"], summary="Partially update audit rule", request=AuditRuleSerializer, responses={200: AuditRuleSerializer})
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
 
 # PUBLIC_INTERFACE
 class AuditRunListView(generics.ListAPIView):
@@ -193,35 +130,6 @@ class AuditRunListView(generics.ListAPIView):
     serializer_class = AuditRunSerializer
     pagination_class = DefaultPagination
     permission_classes = [permissions.IsAuthenticated]
-
-    @extend_schema(
-        tags=["Audit Checks"],
-        summary="Retrieve audit check",
-        responses={200: AuditCheckSerializer},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Checks"],
-        summary="List audit checks",
-        parameters=[
-            OpenApiParameter(name="invoice", description="Filter by invoice id.", required=False, type=int),
-            OpenApiParameter(name="rule", description="Filter by rule id.", required=False, type=int),
-            OpenApiParameter(name="status", description="PASS|FAIL|SKIP|ERROR", required=False, type=str),
-        ],
-        responses={200: AuditCheckSerializer(many=True)},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=["Audit Runs"],
-        summary="Retrieve audit run",
-        responses={200: AuditRunSerializer},
-    )
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
 
     @extend_schema(
         tags=["Audit Runs"],
@@ -256,6 +164,10 @@ class AuditRunDetailView(generics.RetrieveAPIView):
     lookup_field = "id"
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(tags=["Audit Runs"], summary="Retrieve audit run", responses={200: AuditRunSerializer})
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 # PUBLIC_INTERFACE
 class AuditCheckListView(generics.ListAPIView):
@@ -268,6 +180,19 @@ class AuditCheckListView(generics.ListAPIView):
     serializer_class = AuditCheckSerializer
     pagination_class = DefaultPagination
     permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        tags=["Audit Checks"],
+        summary="List audit checks",
+        parameters=[
+            OpenApiParameter(name="invoice", description="Filter by invoice id.", required=False, type=int),
+            OpenApiParameter(name="rule", description="Filter by rule id.", required=False, type=int),
+            OpenApiParameter(name="status", description="PASS|FAIL|SKIP|ERROR", required=False, type=str),
+        ],
+        responses={200: AuditCheckSerializer(many=True)},
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = AuditCheck.objects.select_related("rule", "run").all().order_by("-created_at")
@@ -292,6 +217,10 @@ class AuditCheckDetailView(generics.RetrieveAPIView):
     queryset = AuditCheck.objects.all()
     permission_classes = [permissions.IsAuthenticated]
 
+    @extend_schema(tags=["Audit Checks"], summary="Retrieve audit check", responses={200: AuditCheckSerializer})
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 # PUBLIC_INTERFACE
 class AuditFindingListCreateView(generics.ListCreateAPIView):
@@ -307,6 +236,24 @@ class AuditFindingListCreateView(generics.ListCreateAPIView):
     serializer_class = AuditFindingSerializer
     pagination_class = DefaultPagination
     permission_classes = [StaffWritePermission]
+
+    @extend_schema(
+        tags=["Audit Findings"],
+        summary="List audit findings",
+        parameters=[
+            OpenApiParameter(name="invoice", description="Filter by invoice id.", required=False, type=int),
+            OpenApiParameter(name="severity", description="LOW|MEDIUM|HIGH|CRITICAL", required=False, type=str),
+            OpenApiParameter(name="status", description="OPEN|SUPPRESSED|RESOLVED", required=False, type=str),
+            OpenApiParameter(name="rule", description="Filter by rule id.", required=False, type=int),
+        ],
+        responses={200: AuditFindingSerializer(many=True)},
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(tags=["Audit Findings"], summary="Create audit finding (staff)", request=AuditFindingSerializer, responses={201: AuditFindingSerializer})
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = AuditFinding.objects.select_related("rule").all().order_by("-created_at")
@@ -337,6 +284,18 @@ class AuditFindingRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     queryset = AuditFinding.objects.all()
     permission_classes = [StaffWritePermission]
 
+    @extend_schema(tags=["Audit Findings"], summary="Retrieve audit finding", responses={200: AuditFindingSerializer})
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @extend_schema(tags=["Audit Findings"], summary="Update audit finding", request=AuditFindingSerializer, responses={200: AuditFindingSerializer})
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @extend_schema(tags=["Audit Findings"], summary="Partially update audit finding", request=AuditFindingSerializer, responses={200: AuditFindingSerializer})
+    def patch(self, request, *args, **kwargs):
+        return super().patch(request, *args, **kwargs)
+
 
 # PUBLIC_INTERFACE
 class TriggerAuditRunAPIView(APIView):
@@ -356,6 +315,11 @@ class TriggerAuditRunAPIView(APIView):
     )
     def post(self, request, invoice_id: int, format=None):
         invoice = get_object_or_404(Invoicelist, pk=invoice_id)
-        run = run_audit_for_invoice(invoice, triggered_by=request.user, notes="Triggered via API", scope_filters={"invoice_id": invoice.id})
+        run = run_audit_for_invoice(
+            invoice,
+            triggered_by=request.user,
+            notes="Triggered via API",
+            scope_filters={"invoice_id": invoice.id},
+        )
         data = AuditRunSerializer(run).data
         return Response(data, status=status.HTTP_201_CREATED)

@@ -30,6 +30,13 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 # Simple CSRF endpoint to set csrftoken cookie and return it for Swagger clients
 def csrf_token_view(request):
+    """
+    Get CSRF token and set csrftoken cookie.
+
+    This endpoint is useful for Swagger Try-it-out when using SessionAuthentication.
+    Call this endpoint with GET to receive the CSRF cookie and token value, then
+    include the header "X-CSRFToken: <token>" on unsafe requests (POST/PUT/PATCH/DELETE).
+    """
     token = request.META.get("CSRF_COOKIE")
     return JsonResponse({"csrftoken": token})
 
@@ -56,6 +63,8 @@ urlpatterns = [
 
     # API endpoints for audit app
     path('api/audit/', include('audit.urls')),
+    # Invoicedata API endpoints (graphs and helpers)
+    path('api/invoices/', include('invoicedata.api_urls')),
     # Optional server-rendered pages for audit app
     path('audit/', include('audit.pages_urls')),
     # Existing app URLs
