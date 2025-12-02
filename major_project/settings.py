@@ -25,8 +25,25 @@ SECRET_KEY = 'f9=^ac=jn#g$u354x^6b7x#7)!kg07-o-%0_a3x&z=2z=z4!9u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # Development default; ensure to set to False in production via environment
 
-# Allow all hosts in dev/preview to avoid DisallowedHost errors
-ALLOWED_HOSTS = ["*"]
+# Hosts and CSRF trusted origins for preview/local environments.
+# Note:
+# - Keep this permissive for preview; in production, restrict to known domains via environment variables.
+# - Ports are handled by Django for ALLOWED_HOSTS; CSRF_TRUSTED_ORIGINS requires scheme and supports wildcards on subdomains.
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".kavia.ai",  # allow preview subdomains like *.kavia.ai
+]
+
+# CSRF trusted origins must include scheme and cannot be "*" wildcard.
+# We include the kavia preview domain with a wildcard subdomain and localhost over http and https.
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.kavia.ai",
+    "http://localhost",
+    "http://127.0.0.1",
+    "https://localhost",
+    "https://127.0.0.1",
+]
 
 
 # Application definition
