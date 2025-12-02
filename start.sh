@@ -36,13 +36,17 @@ fi
 # shellcheck disable=SC1091
 source "venv/bin/activate"
 
-# Ensure pip is present and up-to-date in the venv
-python -m pip install --upgrade pip setuptools wheel
+# Defensive: ensure core tooling (pip, setuptools, wheel) are installed BEFORE any other installation.
+# This guarantees pkg_resources (from setuptools) is available to dependencies that import it during install.
+python -m ensurepip --upgrade || true
+python -m pip install --upgrade pip
+python -m pip install --upgrade "setuptools>=68.0" "wheel>=0.41"
 
-# Install dependencies before Django imports happen
+# Install dependencies before any Django imports happen
 if [ -f "requirements.txt" ]; then
   echo "Installing Python dependencies from requirements.txt ..."
-  pip install -r requirements.txt
+  # Use --upgrade to ensure constraints are resolved freshly in ephemeral environments
+  pip install --upgrade -r requirements.txt
 else
   echo "requirements.txt not found; please ensure dependencies are listed."
   exit 1
@@ -61,7 +65,7 @@ except Exception:
 # Confirm Django is importable (fail fast with helpful message)
 try:
     import django  # noqa: F401
-except Exception as exc:
+except Exception:
     print("Failed to import Django after installing dependencies.", file=sys.stderr)
     traceback.print_exc()
     sys.exit(1)

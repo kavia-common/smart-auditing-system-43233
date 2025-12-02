@@ -5,11 +5,11 @@
 - Ensure Python 3.10+ is available.
 - From the project root run:
   - bash start.sh
-  - This script will create a virtual environment, install dependencies, run migrations, and start the server on http://0.0.0.0:3001
+  - This script will create a virtual environment, upgrade pip/setuptools/wheel, install dependencies, run migrations, and start the server on http://0.0.0.0:3001
 
 The preview system runs the same command sequence via Procfile:
 - Procfile: `web: bash start.sh`
-- start.sh: Creates venv, installs `pip install -r requirements.txt`, then `python manage.py migrate` and `python manage.py runserver 0.0.0.0:3001`
+- start.sh: Creates venv, upgrades pip/setuptools/wheel, installs `pip install -r requirements.txt`, then `python manage.py migrate` and `python manage.py runserver 0.0.0.0:3001`
 
 Dependencies are listed in requirements.txt. For environment customization, copy .env.example to .env and update as needed.
 

@@ -13,11 +13,14 @@ pillow>=10.0
 # Environment variable loader (optional for future use)
 python-dotenv>=1.0
 
-# Ensure pkg_resources is available (provided by setuptools)
+# Ensure pkg_resources is available (provided by setuptools).
+# Keep setuptools/wheel pinned reasonably to avoid breakage in hosted build envs.
 setuptools>=68.0
+wheel>=0.41
 
-# Invoice parsing dependency used in views (imported as invoice2data)
-invoice2data>=0.3
+# Invoice parsing dependency used in views (imported as invoice2data).
+# Lock to a stable version to avoid transitive changes affecting startup.
+invoice2data==0.3.6
 
 # Excel export used in views
 xlwt>=1.3
